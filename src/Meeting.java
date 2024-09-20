@@ -1,4 +1,5 @@
 import java.time.LocalDateTime;
+import java.time.Duration;
 
 public class Meeting extends Event implements Completable {
 
@@ -38,9 +39,8 @@ public class Meeting extends Event implements Completable {
     }
 
     public int getDuration() {
-        double startTime = super.getDateTime().getMinute();
-        double endTime = getEndDateTime().getMinute();
-        return (int) (endTime - startTime);
+        Duration duration = Duration.between(super.getDateTime(), getEndDateTime());
+        return (int) duration.toMinutes();
 
     }
 }
