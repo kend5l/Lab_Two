@@ -33,6 +33,21 @@ public class EventPanel extends JPanel {
         JLabel timeLabel = new JLabel("Event Time: " + event.getDateTime().format(formatter));
         add(timeLabel);
 
+
+        // If the event is a Meeting, add end time, location, and duration
+        if (event instanceof Meeting) {
+            Meeting meeting = (Meeting) event;
+
+            JLabel endTimeLabel = new JLabel("End Time: " + meeting.getEndDateTime().format(formatter));
+            add(endTimeLabel);
+
+            JLabel locationLabel = new JLabel("Location: " + meeting.getLocation());
+            add(locationLabel);
+
+            JLabel durationLabel = new JLabel("Duration: " + meeting.getDuration() + " minutes");
+            add(durationLabel);
+        }
+
         // If the event is Completable, add the completion status and a completion checkbox
         if (event instanceof Completable) {
             Completable completableEvent = (Completable) event;
@@ -60,20 +75,8 @@ public class EventPanel extends JPanel {
         }
 
 
-        // If the event is a Meeting, add end time, location, and duration
-        if (event instanceof Meeting) {
-            Meeting meeting = (Meeting) event;
-
-            JLabel endTimeLabel = new JLabel("End Time: " + meeting.getEndDateTime().format(formatter));
-            add(endTimeLabel);
-
-            JLabel locationLabel = new JLabel("Location: " + meeting.getLocation());
-            add(locationLabel);
-
-            JLabel durationLabel = new JLabel("Duration: " + meeting.getDuration() + " minutes");
-            add(durationLabel);
-        }
     }
+
 
     // Method to update the panel background color based on event urgency
     public void updateUrgency() {
