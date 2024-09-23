@@ -8,67 +8,73 @@ import java.time.format.DateTimeFormatter;
 
 public class EventPanel extends JPanel {
 
-    private Event event;  // The event to display
-    private JButton completeButton;  // Button to mark event as complete (if Completable)
+    private Event event;
+    private JButton completeButton;
 
-    // Constructor to initialize EventPanel with an Event object
+    // constructor to initialize EventPanel with an Event object
     public EventPanel(Event event) {
         this.event = event;
-        setLayout(new GridLayout(0, 1));  // Vertical layout
+        setLayout(new GridLayout(0, 1));
 
-        // Add labels and complete button (if applicable)
+
         addEventDetails();
         updateUrgency();
     }
 
-    // Method to add event details to the panel
+    // method to add event details to the panel
     private void addEventDetails() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        // Add event name
+
         JLabel nameLabel = new JLabel("Event Name: " + event.getName());
+        nameLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
         add(nameLabel);
 
-        // Add event time
+
         JLabel timeLabel = new JLabel("Event Time: " + event.getDateTime().format(formatter));
+        timeLabel.setFont(new Font("Malgun Gothic",Font.BOLD, 15));
         add(timeLabel);
 
 
-        // If the event is a Meeting, add end time, location, and duration
+        // if the event is a meeting, add end time, location, and duration
         if (event instanceof Meeting) {
             Meeting meeting = (Meeting) event;
 
             JLabel endTimeLabel = new JLabel("End Time: " + meeting.getEndDateTime().format(formatter));
+            endTimeLabel.setFont(new Font("Malgun Gothic",Font.BOLD, 15));
             add(endTimeLabel);
 
             JLabel locationLabel = new JLabel("Location: " + meeting.getLocation());
+            locationLabel.setFont(new Font("Malgun Gothic",Font.BOLD, 15));
             add(locationLabel);
 
             JLabel durationLabel = new JLabel("Duration: " + meeting.getDuration() + " minutes");
+            durationLabel.setFont(new Font("Malgun Gothic",Font.BOLD, 15));
             add(durationLabel);
         }
 
-        // If the event is Completable, add the completion status and a completion checkbox
+        // if the event is Completable, add the completion status and a completion checkbox
         if (event instanceof Completable) {
             Completable completableEvent = (Completable) event;
 
-            // Create a checkbox to represent the completion status
             JCheckBox completeCheckBox = new JCheckBox("Complete", completableEvent.isComplete());
             add(completeCheckBox);
 
-            // Disable the checkbox if the event is already complete
+
             if (completableEvent.isComplete()) {
                 completeCheckBox.setEnabled(false);
             }
 
-            // Add a listener to the checkbox
+            // add a listener to the checkbox
             completeCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // When the checkbox is selected, mark the event as complete
+
                     if (completeCheckBox.isSelected()) {
                         completableEvent.complete();
-                        completeCheckBox.setEnabled(false);  // Disable the checkbox after marking complete
+                        nameLabel.setFont(nameLabel.getFont().deriveFont(Font.ITALIC));
+                        completeCheckBox.setEnabled(false);
+
                     }
                 }
             });
@@ -77,25 +83,26 @@ public class EventPanel extends JPanel {
 
     }
 
-
-    // Method to update the panel background color based on event urgency
+    // method to update the panel background color based on event urgency
     public void updateUrgency() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime eventTime = event.getDateTime();
 
-        // Calculate the time difference between now and the event
+
         Duration duration = Duration.between(now, eventTime);
 
-        // Set the background color based on the urgency of the event
+        // set the background color based on the urgency of the event
         if (duration.isNegative()) {
-            // Event is overdue
-            setBackground(Color.RED);
+
+            setBackground(new Color(255,102,102));
+
         } else if (duration.toHours() <= 1) {
-            // Event is imminent (less than or equal to 1 hour away)
-            setBackground(Color.YELLOW);
+
+            setBackground(new Color(255,255,153));
+
         } else {
-            // Event is distant
-            setBackground(Color.GREEN);
+
+            setBackground(new Color(144,238,144));
         }
     }
 }

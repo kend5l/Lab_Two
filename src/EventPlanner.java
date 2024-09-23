@@ -20,12 +20,12 @@ public class EventPlanner {
     // add defaults events
     public static void addDefaultEvents(EventListPanel eventListPanel) {
 
-        LocalDateTime deadlineDateTime = LocalDateTime.of(2024, 9, 25, 15, 0);
+        LocalDateTime deadlineDateTime = LocalDateTime.of(2024, 9, 22, 15, 0);
         Deadline deadline = new Deadline("Submit Project", deadlineDateTime);
 
 
-        LocalDateTime meetingStartDateTime = LocalDateTime.of(2024, 9, 30, 10, 0);
-        LocalDateTime meetingEndDateTime = LocalDateTime.of(2024, 9, 30, 11, 0);
+        LocalDateTime meetingStartDateTime = LocalDateTime.of(2024, 9, 23, 15, 0);
+        LocalDateTime meetingEndDateTime = LocalDateTime.of(2024, 9, 23, 16, 0);
         Meeting meeting = new Meeting("Touchbase Meeting", meetingStartDateTime, meetingEndDateTime, "Conference Room 1");
 
 

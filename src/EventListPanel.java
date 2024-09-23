@@ -8,30 +8,30 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class EventListPanel extends JPanel {
-    private ArrayList<Event> events; // List of events
-    private JPanel controlPanel;  // Panel for controls
-    private JPanel displayPanel;  // Panel to display EventPanels
-    private JComboBox<String> sortDropDown; // Dropdown to sort events
-    private JComboBox<String> filterDropDown; // Dropdown to filter events by type
-    private JCheckBox filterDisplay;  // Checkbox to filter completed events
-    private JButton addEventButton;  // Button to add a new event
+    private ArrayList<Event> events; // list of events
+    private JPanel controlPanel;  // panel for controls
+    private JPanel displayPanel;  // panel to display EventPanels
+    private JComboBox<String> sortDropDown; // dropdown to sort events
+    private JComboBox<String> filterDropDown; // dropdown to filter events by type
+    private JCheckBox filterDisplay;  // checkbox to filter completed events
+    private JButton addEventButton;  // button to add a new event
 
-    // Constructor
+
     public EventListPanel() {
         events = new ArrayList<>();
-        setLayout(new BorderLayout());  // Main layout manager
+        setLayout(new BorderLayout());
 
-        // Create control panel and add it to the top
+        // create control panel
         controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
 
-        // Sort dropdown options
+        // sort dropdown options
         String[] sortOptions = {"Sort by Name", "Sort by Date", "Sort by Name (Reverse)", "Sort by Date (Reverse)"};
         sortDropDown = new JComboBox<>(sortOptions);
-        sortDropDown.addActionListener(e -> sortEvents((String) sortDropDown.getSelectedItem())); // Use lambda for sorting
+        sortDropDown.addActionListener(e -> sortEvents((String) sortDropDown.getSelectedItem()));
         controlPanel.add(sortDropDown);
 
-        // Filter by event type dropdown
+        // filter by event type dropdown
         String[] filterOptions = {"All Events", "Deadlines", "Meetings"};
         filterDropDown = new JComboBox<>(filterOptions);
         filterDropDown.addActionListener(new ActionListener() {
@@ -40,12 +40,12 @@ public class EventListPanel extends JPanel {
                 filterEventsByType((String) filterDropDown.getSelectedItem());
             }
         });
-        controlPanel.add(new JLabel("Filter by Type:")); // Label for clarity
+        controlPanel.add(new JLabel("Filter by Type:"));
         controlPanel.add(filterDropDown);
 
-        // Filter checkbox for completed events
+        // filter checkbox for completed events
         filterDisplay = new JCheckBox("Show Completed Events");
-        filterDisplay.setSelected(true);  // Show completed events by default
+        filterDisplay.setSelected(true);
         filterDisplay.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,43 +54,43 @@ public class EventListPanel extends JPanel {
         });
         controlPanel.add(filterDisplay);
 
-        // Add event button
+        // add event button
         addEventButton = new JButton("Add Event");
         addEventButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
-        // Open modal to add events
+        // open modal to add events
         addEventButton.addActionListener(e -> new AddEventModal(this));
 
-        // Add button to controlPanel
+        // add button to controlPanel
         controlPanel.add(addEventButton);
 
-        add(controlPanel, BorderLayout.NORTH);  // Add control panel at the top
+        add(controlPanel, BorderLayout.NORTH);
 
-        // Create display panel and add it to the center
+        // create display panel and add it to the center
         displayPanel = new JPanel();
-        displayPanel.setLayout(new BoxLayout(displayPanel, BoxLayout.Y_AXIS));  // Vertical list of events
-        JScrollPane scrollPane = new JScrollPane(displayPanel);  // Add scrollable panel
-        add(scrollPane, BorderLayout.CENTER);  // Add scrollable display panel in the center
+        displayPanel.setLayout(new BoxLayout(displayPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(displayPanel);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
-    // Method to add an Event to the list and update the display
+    // method to add an Event to the list and update the display
     public void addEvent(Event event) {
-        events.add(event);  // Add event to the list
-        refreshDisplay();  // Update the display
+        events.add(event);
+        refreshDisplay();
     }
 
-    // Method to refresh the display panel
+    // refresh the display panel
     private void refreshDisplay() {
-        displayPanel.removeAll();  // Clear the display panel
+        displayPanel.removeAll();
         for (Event event : events) {
             EventPanel eventPanel = new EventPanel(event);
-            displayPanel.add(eventPanel);  // Add each event panel to the display
+            displayPanel.add(eventPanel);
         }
-        displayPanel.revalidate();  // Refresh the layout
-        displayPanel.repaint();  // Redraw the display
+        displayPanel.revalidate();
+        displayPanel.repaint();
     }
 
-    // Method to sort events based on selected sorting option
+    // method to sort events based on selected sorting option
     private void sortEvents(String sortOption) {
         switch (sortOption) {
             case "Sort by Name":
@@ -106,41 +106,41 @@ public class EventListPanel extends JPanel {
                 Collections.sort(events, Comparator.comparing(Event::getDateTime).reversed());
                 break;
         }
-        refreshDisplay();  // Update the display after sorting
+        refreshDisplay();
     }
 
-    // Method to filter events based on the checkbox
+    // method to filter events based on the checkbox
     private void filterEvents() {
-        displayPanel.removeAll();  // Clear the display panel
+        displayPanel.removeAll();
         for (Event event : events) {
             if (filterDisplay.isSelected() || !(event instanceof Completable) || !((Completable) event).isComplete()) {
                 EventPanel eventPanel = new EventPanel(event);
-                displayPanel.add(eventPanel);  // Add the panel if it matches the filter criteria
+                displayPanel.add(eventPanel);
             }
         }
-        displayPanel.revalidate();  // Refresh the layout
-        displayPanel.repaint();  // Redraw the display
+        displayPanel.revalidate();
+        displayPanel.repaint();
     }
 
-    // Method to filter events by type (Deadlines or Meetings)
+    // method to filter events by type (Deadlines or Meetings)
     private void filterEventsByType(String filterOption) {
-        displayPanel.removeAll();  // Clear the display panel
+        displayPanel.removeAll();
 
         for (Event event : events) {
             if (filterOption.equals("All Events")) {
-                displayEvent(event);  // Show all events
+                displayEvent(event);
             } else if (filterOption.equals("Deadlines") && event instanceof Deadline) {
-                displayEvent(event);  // Show only Deadline events
+                displayEvent(event);
             } else if (filterOption.equals("Meetings") && event instanceof Meeting) {
-                displayEvent(event);  // Show only Meeting events
+                displayEvent(event);
             }
         }
 
-        displayPanel.revalidate();  // Refresh the layout
-        displayPanel.repaint();  // Redraw the display
+        displayPanel.revalidate();
+        displayPanel.repaint();
     }
 
-    // Helper method to display an event
+
     private void displayEvent(Event event) {
         EventPanel eventPanel = new EventPanel(event);
         displayPanel.add(eventPanel);
