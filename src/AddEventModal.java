@@ -25,7 +25,7 @@ public class AddEventModal extends JDialog {
 
         nameField = new JTextField();
         dateTimeField = new JTextField("yyyy-MM-dd HH:mm");
-        endDateTimeField = new JTextField("yyyy-MM-dd HH:mm");  // Only for Meeting
+        endDateTimeField = new JTextField("yyyy-MM-dd HH:mm");
         locationField = new JTextField();  // Only for Meeting
 
 
