@@ -1,53 +1,127 @@
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class EventTester {
 
+    static LocalDateTime deadline = LocalDateTime.of(2024, 12, 7, 17, 0);
+    static String lastDeadlineName = "Last Deadline";
+    static String lastDeadlineNameAlt = "Final Deadline";
+    static Deadline lastDeadline = new Deadline(lastDeadlineName, deadline );
+    static Deadline midDeadline = new Deadline("Mid Deadline", deadline.minusDays(10) );
+    static Deadline firstDeadline = new Deadline("First Deadline", deadline.minusDays(20) );
+    static final int INCREMENT = 1;
+
+    static LocalDateTime start = LocalDateTime.of(2024, 10, 7, 15, 0);
+    static LocalDateTime end = LocalDateTime.of(2024, 10, 7, 16, 0);
+    static String location = "MCS 321";
+    static String locationAlt =  "MCS 339";
+
+    static Meeting firstMeeting = new Meeting("First Meeting", start, end, location);
+    static Meeting lastMeeting = new Meeting("Last Meeting", start.plusDays(4), end.plusDays(4), location);
+    static Meeting midMeeting = new Meeting("Middle Meeting", start.plusDays(2), end.plusDays(2), location);
+
+    static Event[] events = new Event[] {
+            midDeadline,
+            lastMeeting,
+            lastDeadline,
+            firstDeadline,
+            firstMeeting,
+            midMeeting,
+    };
+
+    static Deadline[] deadlines = new Deadline[] {
+            firstDeadline,
+            midDeadline,
+            lastDeadline,
+    };
+
+    static Meeting[] meetings = new Meeting[] {
+            firstMeeting,
+            midMeeting,
+            lastMeeting,
+    };
+
     public static void main(String[] args) {
-        // we will run methods to test our event calendar
-        testDeadline();
-        testMeeting();
+        System.out.println("Testing Getters..." + (testGetters()? "passed" : "failed"));
+        System.out.println("Testing Setters..." + (testSetters()? "passed" : "failed"));
+        System.out.println("Testing implements Comparable..." + (testComparingEvents()? "passed" : "failed"));
+        System.out.println("Testing get meeting duration..." + (testMeetingDuration()? "passed" : "failed"));
+        System.out.println("Testing implements Completable..." + (testCompletable()? "passed" : "failed"));
     }
 
-    public static void testDeadline() {
-
-        System.out.println("-----Testing Deadline-----");
-        // deadline date variable
-        LocalDateTime deadlineDateTime = createDateTime("2024-09-20 12:00");
-
-        // creating a deadline event
-        Deadline deadline = new Deadline("Touch base Meeting", deadlineDateTime);
-        System.out.println("Meeting Name: " + deadline.getName());
-        System.out.println("Meeting Time: " + deadline.getDateTime());
-        // mark event as complete
-        deadline.complete();
-        System.out.println("Meeting complete? " + deadline.isComplete());
+    public static boolean testGetters() {
+        return (
+                lastDeadline.getName().equals(lastDeadlineName)
+                        && lastDeadline.getDateTime().equals(deadline)
+                        && firstMeeting.getEndDateTime().equals(end)
+                        && firstMeeting.getLocation().equals(location)
+        );
     }
 
-    public static void testMeeting() {
+    public static boolean testSetters() {
+        // try using the Setters.
+        lastDeadline.setName(lastDeadlineNameAlt);
+        lastDeadline.setDateTime(deadline.minusDays(INCREMENT));
+        firstMeeting.setEndDateTime(end.plusDays(INCREMENT));
+        firstMeeting.setLocation(locationAlt);
 
-        System.out.println("-----Testing Meeting-----");
+        // Test whether the setters set (with the getters)
+        boolean passed = (
+                lastDeadline.getName().equals(lastDeadlineNameAlt)
+                        && lastDeadline.getDateTime().equals(deadline.minusDays(INCREMENT))
+                        && firstMeeting.getEndDateTime().equals(end.plusDays(INCREMENT))
+                        && firstMeeting.getLocation().equals(locationAlt)
+        );
 
-        // set meeting times
-        LocalDateTime startDateTime = createDateTime("2024-09-20 12:00");
-        LocalDateTime endDateTime = createDateTime("2024-09-20 13:00");
+        // change back to original values
+        lastDeadline.setName(lastDeadlineName);
+        lastDeadline.setDateTime(deadline);
+        firstMeeting.setEndDateTime(end);
+        firstMeeting.setLocation(location);
 
-        Meeting meeting = new Meeting("Touch Base Meeting", startDateTime, endDateTime, "Room 202");
-
-        System.out.println("Meeting Name: " + meeting.getName());
-        System.out.println("Meeting Time: " + meeting.getDateTime());
-        System.out.println("Meeting end Time: " + meeting.getEndDateTime());
-        System.out.println("Meeting Location: " + meeting.getLocation());
-        System.out.println("Duration: " + meeting.getDuration() + " Minutes");
-        meeting.complete();
-        System.out.println("Meeting complete? " + meeting.isComplete());
-
+        return passed;
     }
 
-    // method to format local date time
-    private static LocalDateTime createDateTime(String dateTimeStart) {
+    public static boolean testComparingEvents() {
+        Arrays.sort(events);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return LocalDateTime.parse(dateTimeStart, formatter);
+        return (
+                events[0] == firstMeeting
+                        && events[1] == midMeeting
+                        && events[2] == lastMeeting
+                        && events[3] == firstDeadline
+                        && events[4] == midDeadline
+                        && events[5] == lastDeadline
+        );
+    }
+
+    public static boolean testMeetingDuration() {
+        // duration of meeting should be one hour
+        int durationInMinutes = firstMeeting.getDuration();
+        Duration duration1 = Duration.ofMinutes(durationInMinutes);
+        Duration duration2 = Duration.ofHours(1);
+
+        return duration1.equals(duration2);
+    }
+
+    public static boolean testCompletable() {
+        // complete all the deadlines
+        for (Deadline deadline : deadlines) {
+            deadline.complete();
+        }
+        // complete all the meetings
+        for (Meeting meeting : meetings) {
+            meeting.complete();
+        }
+        // check that the deadlines are complete
+        boolean deadlinesPass = Stream.of(deadlines)
+                .allMatch(Deadline::isComplete);
+        // check that the meetings are complete
+        boolean meetingsPass = Stream.of(meetings)
+                .allMatch(Meeting::isComplete);
+        // return results
+        return deadlinesPass && meetingsPass;
     }
 }
